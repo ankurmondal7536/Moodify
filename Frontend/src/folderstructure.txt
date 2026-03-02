@@ -1,0 +1,7 @@
+/src
+  /utils
+    moodDetection.js   <-- The "Brain" (Mood Logic)
+  /components
+    Moodify.jsx        <-- The "Eye" (Webcam & AI)
+  App.jsx              <-- The "Heart" (Main Entry)
+  App.css              <-- The "Style"
