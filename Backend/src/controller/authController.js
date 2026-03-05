@@ -2,9 +2,9 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/user.model');
+const redis = require('../config/cache');
 
 // above code is for requiring all essential files for authentication
-
 
 
 // Register user function
@@ -64,19 +64,18 @@ async function registerUser(req, res) {
     })
 }
 
-
-
+// login user function
 async function loginUser(req, res) {
 
     // get user data from request from postman
-    const { email, password , username } = req.body
+    const { email, password, username } = req.body
     const user = await userModel.findOne({
         $or: [
             { email },
             { username }
         ]
     }).select("+password")  // by default password is not visible
-  
+
 
     // check if user exists
     if (!user) {
@@ -104,10 +103,10 @@ async function loginUser(req, res) {
             expiresIn: "3d"
         })
     // token send to cookies
-    res.cookie("token",token)  
-    
+    res.cookie("token", token)
+
     return res.status(200).json({
-        message:"User Logged In",
+        message: "User Logged In",
         user: {
             id: user._id,
             username: user.username,
@@ -116,9 +115,40 @@ async function loginUser(req, res) {
     })
 }
 
+// get user data function
+async function getMe(req, res) {
+
+    // get user data from request from postman
+    const user = await userModel.findById(req.user.id)
+    res.status(200).json({
+        message: "User Data Fetched Successfully",
+        user
+    })
+}
+
+
+// logout user function
+async function logoutUser(req, res) {
+
+
+    const token = req.cookies.token
+
+
+    // saving the loggedout users token in redis
+    await redis.set(token, Date.now().toString(), "EX", 60 * 60)
+    
+    // clearing the cookie
+    res.clearCookie("token")
+
+    return res.status(200).json({
+        message: "User Logged Out Successfully"
+    })
+}
 
 
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getMe,
+    logoutUser
 }
