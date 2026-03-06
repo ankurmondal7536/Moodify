@@ -1,19 +1,17 @@
 import React from 'react';
 import Moodify from './components/Moodify';
 import './App.css';
+import { RouterProvider } from 'react-router';
+import { router } from './app.routes';
+import { AuthProvider } from './features/auth/auth.context';
+
 
 function App() {
   return (
-    <div className="App">
-      <header>
-        <h1>Moodify AI</h1>
-        <p>Express yourself and let the AI guess!</p>
-      </header>
-      <main>
-        <Moodify />
-      </main>
-    </div>
-  );
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  )
 }
 
 export default App;
