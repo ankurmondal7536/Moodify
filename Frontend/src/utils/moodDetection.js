@@ -11,7 +11,7 @@ export const getMoodFromBlendshapes = (blendshapes) => {
 
   // 1. SHOCKED Ankhein thodi bhi khuli ho aur mooh halka khula ho
   if (scores['eyeWideLeft'] > 0.15 || scores['eyeWideRight'] > 0.15 || scores['jawOpen'] > 0.2) {
-    return "Shocked 😱";
+    return "Surprised 😱";
   }
 
   // 2. HAPPY

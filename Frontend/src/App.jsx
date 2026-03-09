@@ -4,13 +4,17 @@ import './App.css';
 import { RouterProvider } from 'react-router';
 import { router } from './app.routes';
 import { AuthProvider } from './features/auth/auth.context';
-
+import { songContextProvider } from './features/home/song.context';
 
 function App() {
   return (
+
     <AuthProvider>
-      <RouterProvider router={router} />
+      <songContextProvider>
+        <RouterProvider router={router} />
+      </songContextProvider>
     </AuthProvider>
+
   )
 }
 
