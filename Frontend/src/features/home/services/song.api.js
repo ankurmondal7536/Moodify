@@ -4,7 +4,8 @@ const api = axios.create({
     withCredentials: true
 })
 
-export async function getSong({mood}){
-    const response = await api.get(`/api/songs/fetch-song?mood=+mood`);
+async function getSong({mood}){
+    const response = await api.get(`/api/songs/fetch-song?mood=${mood}`)
     return response.data;
 }
+export default getSong

@@ -2,12 +2,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
 import Webcam from "react-webcam";
 import { getMoodFromBlendshapes } from "../utils/moodDetection";
+import { useSong } from "../../home/hooks/useSong"  // import hook
+import Player from "../../home/components/Player"             // import Player
+import "../../shared/global.scss"
+import "./moodify.scss"
 
 const Moodify = () => {
   const webcamRef = useRef(null);
   const [landmarker, setLandmarker] = useState(null);
   const [mood, setMood] = useState("Face camera and click Scan");
 
+  const { song, loading, handleFetchSong } = useSong()
   // 1. AI Models Load karna (Run once on Mount)
   useEffect(() => {
     const loadAI = async () => {
@@ -29,7 +34,7 @@ const Moodify = () => {
   }, []);
 
   // 2. Simple OnClick Function
-  const scanNow = () => {
+  const scanNow = async() => {
     if (landmarker && webcamRef.current?.video?.readyState === 4) {
       const video = webcamRef.current.video;
       
@@ -39,6 +44,7 @@ const Moodify = () => {
       if (result.faceBlendshapes?.length > 0) {
         const detectedMood = getMoodFromBlendshapes(result.faceBlendshapes);
         setMood(detectedMood);
+        await handleFetchSong(detectedMood.toLowerCase()); // API call
       } else {
         setMood("Face not found. Try again!");
       }
@@ -65,6 +71,13 @@ const Moodify = () => {
       >
         Scan My Face 📸
       </button>
+       {/* Loading state */}
+      {loading && <p style={{ color: '#aaa' }}>Fetching songs for your mood...</p>}
+
+      {/* Player sirf tab show hoga jab songs aa jayein */}
+      {!loading && song && song.length > 0 && (
+        <Player songs={song} />
+      )}
     </div>
   );
 };
